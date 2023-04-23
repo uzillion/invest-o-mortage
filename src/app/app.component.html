@@ -1,0 +1,85 @@
+<div class="chart-container">
+  <canvas id="charts"></canvas>
+</div>
+
+<div class="input-container">
+  <div class="mortgage-info">
+    <h3>Mortgage Info</h3>
+    <mat-form-field appearance="outline">
+      <mat-label>Remaining Principle</mat-label>
+      <input
+        matInput
+        required
+        type="number"
+        [(ngModel)]="principle"
+        (ngModelChange)="updateChart()">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Loan Period (in years)</mat-label>
+      <input
+        matInput
+        required
+        type="number"
+        [(ngModel)]="loanLength"
+        (ngModelChange)="updateChart()">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Interest Rate</mat-label>
+      <input
+        matInput
+        required
+        type="number"
+        [(ngModel)]="interestRate"
+        (ngModelChange)="updateChart()">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Additional Payments</mat-label>
+      <input
+        matInput
+        type="number"
+        [(ngModel)]="additionalPrinciple"
+        (ngModelChange)="updateChart()">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>PMI</mat-label>
+      <input
+        matInput
+        type="number"
+        [(ngModel)]="pmi"
+        (ngModelChange)="updateChart()">
+    </mat-form-field>
+  </div>
+
+  <div class="investment-info">
+    <h3>Investment Info</h3>
+    <mat-form-field appearance="outline">
+      <mat-label>Starting Portfolio Balance</mat-label>
+      <input
+        matInput
+        type="number"
+        required
+        [(ngModel)]="investmentStart"
+        (ngModelChange)="updateChart()">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Monthly Contribution</mat-label>
+      <input
+        matInput
+        type="number"
+        [(ngModel)]="monthlyInvestment"
+        (ngModelChange)="updateChart()">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Annual ROI</mat-label>
+      <input
+        matInput
+        type="number"
+        [(ngModel)]="annualROI"
+        (ngModelChange)="updateChart()">
+    </mat-form-field>
+  </div>
+</div>
