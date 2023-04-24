@@ -1,25 +1,77 @@
 <div class="chart-container">
   <canvas id="charts"></canvas>
 </div>
-
+<div class="additional-payment-container">
+  <mat-form-field appearance="outline">
+    <mat-label>Additional Payment</mat-label>
+    <span matTextPrefix>$&nbsp;</span>
+    <input
+      matInput
+      required
+      [min]="0"
+      type="number"
+      [(ngModel)]="additionalPayment"
+      (ngModelChange)="updateProportionValues()">
+      <span matTextSuffix>&nbsp;/month</span>
+  </mat-form-field>
+  <div class="proportion-container">
+    <mat-form-field appearance="outline">
+      <mat-label>Towards Principle</mat-label>
+      <span matTextPrefix>$&nbsp;</span>
+      <input
+        matInput
+        [min]="0"
+        required
+        type="number"
+        [(ngModel)]="additionalPrinciple"
+        (ngModelChange)="updateProportion('principle')">
+    </mat-form-field>
+    <mat-slider
+      [displayWith]="displayWith"
+      [discrete]="true"
+      [min]="0"
+      [max]="100"
+      [step]="1">
+      <input
+        matSliderThumb
+        [(value)]="investmentProportion"
+        (valueChange)="updateProportionValues()">
+    </mat-slider>
+    <mat-form-field appearance="outline">
+      <mat-label>Towards Investment</mat-label>
+      <span matTextPrefix>$&nbsp;</span>
+      <input
+        matInput
+        [min]="0"
+        required
+        type="number"
+        [(ngModel)]="additionalInvestment"
+        (ngModelChange)="updateProportion('investment')">
+    </mat-form-field>
+  </div>
+</div>
 <div class="input-container">
   <div class="mortgage-info">
     <h3>Mortgage Info</h3>
     <mat-form-field appearance="outline">
       <mat-label>Remaining Principle</mat-label>
+      <span matTextPrefix>$&nbsp;</span>
       <input
         matInput
+        [min]="0"
         required
         type="number"
         [(ngModel)]="principle"
         (ngModelChange)="updateChart()">
     </mat-form-field>
     <mat-form-field appearance="outline">
-      <mat-label>Loan Period (in years)</mat-label>
+      <mat-label>Loan Period</mat-label>
+      <span matTextSuffix>&nbsp;years</span>
       <input
         matInput
         required
         type="number"
+        [min]="0"
         [(ngModel)]="loanLength"
         (ngModelChange)="updateChart()">
     </mat-form-field>
@@ -28,11 +80,13 @@
       <input
         matInput
         required
+        [min]="0"
         type="number"
         [(ngModel)]="interestRate"
         (ngModelChange)="updateChart()">
+        <span matTextSuffix>&nbsp;%</span>
     </mat-form-field>
-
+<!--
     <mat-form-field appearance="outline">
       <mat-label>Additional Payments</mat-label>
       <input
@@ -40,15 +94,18 @@
         type="number"
         [(ngModel)]="additionalPrinciple"
         (ngModelChange)="updateChart()">
-    </mat-form-field>
+    </mat-form-field> -->
 
     <mat-form-field appearance="outline">
       <mat-label>PMI</mat-label>
+      <span matTextPrefix>$&nbsp;</span>
       <input
         matInput
         type="number"
+        [min]="0"
         [(ngModel)]="pmi"
         (ngModelChange)="updateChart()">
+        <span matTextSuffix>&nbsp;/month</span>
     </mat-form-field>
   </div>
 
@@ -56,30 +113,34 @@
     <h3>Investment Info</h3>
     <mat-form-field appearance="outline">
       <mat-label>Starting Portfolio Balance</mat-label>
+      <span matTextPrefix>$&nbsp;</span>
       <input
         matInput
         type="number"
+        [min]="0"
         required
         [(ngModel)]="investmentStart"
         (ngModelChange)="updateChart()">
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
+    <!-- <mat-form-field appearance="outline">
       <mat-label>Monthly Contribution</mat-label>
       <input
         matInput
         type="number"
         [(ngModel)]="monthlyInvestment"
         (ngModelChange)="updateChart()">
-    </mat-form-field>
+    </mat-form-field> -->
 
     <mat-form-field appearance="outline">
       <mat-label>Annual ROI</mat-label>
       <input
         matInput
         type="number"
+        [min]="0"
         [(ngModel)]="annualROI"
         (ngModelChange)="updateChart()">
+        <span matTextSuffix>&nbsp;%/yr</span>
     </mat-form-field>
   </div>
 </div>

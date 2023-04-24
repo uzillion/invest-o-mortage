@@ -28,17 +28,22 @@ type LinearChartScales = _DeepPartialObject<{ [key: string]: ScaleOptionsByType<
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+  private readonly OUTSTANDING_BALANCE: string = 'Outstanding Balance';
+  private readonly PORTFOLIO_VALUE: string = 'Porfolio Value';
+  private readonly TOTAL_INTEREST_PAID: string = 'Total Interest Paid';
   private posX: number = 0;
   private posY: number = 0;
   private draw: boolean = false;
 
+  additionalPrinciple: number = 0;
+  investmentProportion: number = 0;
   title = 'invest-o-mortgage';
+  additionalPayment: number = 0;
   principle: number = 1000000;
   loanLength: number = 30;
   interestRate: number = 2;
-  additionalPrinciple: number = 0;
   investmentStart: number = 0;
-  monthlyInvestment: number = 500;
+  additionalInvestment: number = 0;
   annualROI: number = 10;
   pmi: number = 150;
   chart: Chart | undefined;
@@ -52,19 +57,19 @@ export class AppComponent implements OnInit {
         labels: mortgageData.map(row => row.month),
         datasets: [
           {
-            label: 'Outstanding Balance',
+            label: this.OUTSTANDING_BALANCE,
             yAxisID: 'y',
             xAxisID: 'x',
             data: mortgageData.map(row => this.principle - row.totalPrinciple)
           },
           {
-            label: 'Portfolio Value by Month',
+            label: this.PORTFOLIO_VALUE,
             yAxisID: 'y',
             xAxisID: 'x',
             data: investmentData
           },
           {
-            label: 'Total Intereset Paid',
+            label: this.TOTAL_INTEREST_PAID,
             data: mortgageData.map(row => row.totalInterest),
             yAxisID: 'y',
             xAxisID: 'x'
@@ -156,6 +161,27 @@ export class AppComponent implements OnInit {
     });
   }
 
+  updateProportion(updateFrom?: 'principle' | 'investment'): void {
+    if (updateFrom === 'principle') {
+      this.additionalInvestment = this.additionalPayment - this.additionalPrinciple;
+    } else if (updateFrom === 'investment') {
+      this.additionalPrinciple = this.additionalPayment - this.additionalInvestment;
+    }
+
+    this.investmentProportion = ( this.additionalInvestment / this.additionalPayment ) * 100
+    this.updateChart();
+  }
+
+  updateProportionValues(): void {
+    this.additionalPrinciple = this.additionalPayment * ( ( 100 - this.investmentProportion ) / 100 );
+    this.additionalInvestment = this.additionalPayment - this.additionalPrinciple;
+    this.updateChart();
+  }
+
+  displayWith(value: number): string {
+    return value + '%';
+  }
+
   updateChart(): void {
     if (!this.chart) {
       return;
@@ -165,19 +191,19 @@ export class AppComponent implements OnInit {
     const investmentData: number[] = this.getInvestmentData();
     this.chart.data.datasets = [
       {
-        label: 'Payments by Month',
+        label: this.OUTSTANDING_BALANCE,
         yAxisID: 'y',
         xAxisID: 'x',
         data: mortgageData.map(row => this.principle - row.totalPrinciple)
       },
       {
-        label: 'Portfolio by Month',
+        label: this.PORTFOLIO_VALUE,
         yAxisID: 'y',
         xAxisID: 'x',
         data: investmentData
       },
       {
-        label: 'Interest Payment',
+        label: this.TOTAL_INTEREST_PAID,
         data: mortgageData.map(row => row.totalInterest),
         yAxisID: 'y',
         xAxisID: 'x'
@@ -191,16 +217,21 @@ export class AppComponent implements OnInit {
     this.chart.options.scales = this.getChartOptsScales();
 
     this.chart.update();
+    this.chart.resize();
     // this.chart.destroy();
     // this.ngOnInit();
   }
 
   private getChartOptsScales(): LinearChartScales {
+    const maxAmount: number = Math.max(
+      this.principle + Math.floor(0.1 * this.principle),
+      this.getInvestmentData().pop() || 0
+    )
     return {
       y: {
         // type: 'logarithmic',
         min: 0,
-        max: this.principle + Math.floor(0.1 * this.principle),
+        max: maxAmount,
         title: {
           text: 'Amount ($)',
           display: true
@@ -222,7 +253,7 @@ export class AppComponent implements OnInit {
     let currentPortfolioValue: number = this.investmentStart;
     const totalNumberOfMonths: number = this.loanLength * 12;
     for (let month = 1; month <= totalNumberOfMonths; month++) {
-      currentPortfolioValue += this.monthlyInvestment || 0;
+      currentPortfolioValue += this.additionalInvestment || 0;
       currentPortfolioValue += currentPortfolioValue * ((this.annualROI || 0)/ 12/ 100);
       investmentData.push(currentPortfolioValue);
     }
